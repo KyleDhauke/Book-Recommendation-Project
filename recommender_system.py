@@ -17,12 +17,42 @@ ratings = pd.read_csv('Goodbooks-10k Dataset/ratings.csv', sep=',')
 df = pd.merge(ratings, books, on="book_id")
 # df.head(5)
 
-print("before duplicates removed: " + str(df.shape))
 
-df1= df.drop_duplicates(['user_id','original_title'])
-print("after original_title duplicates removed: " + str(df1.shape)) #(??, ??)
+#print("before duplicates removed: " + str(df.shape)) # (5976479, 8)
+df1= df.drop_duplicates(['original_title'])
+#print("after original_title duplicates removed: " + str(df1.shape)) #(5859358, 8)
+# 117,121 duplicates removed
 
-# print(df1.head(10)) #went down from ?? to ??
+
+### Matrix Factorisation ###
+
+books_matrix = df1.pivot_table(index = 'user_id', columns = 'original_title', values = 'rating', fill_value = 0.0)
+# print(books_matrix.shape) #(3821, 9274)
+# print(books_matrix.head()) #[5 rows x 9274 columns]
+
+
+
+# Creating a training data set
+X = books_matrix.values.T # (9274, 3821). Transposed the books_matrix.
+
+#Fitting the Model
+SVD = TruncatedSVD(n_components=12, random_state=0)
+matrix = SVD.fit_transform(X)
+print(matrix.shape) #(9274, 12)
+
+
+import warnings
+warnings.filterwarnings("ignore",category =RuntimeWarning)#to avoid RuntimeWarning #Base class for warnings about dubious runtime behavior.
+corr = np.corrcoef(matrix)
+corr.shape
+
+
+
+title = books_matrix.columns
+title_list = list(title)
+samia = title_list.index('Memoirs of a Geisha')
+corr_samia  = corr[samia]
+print(list(title[(corr_samia >= 0.9)]))
 
 
 
