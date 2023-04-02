@@ -36,23 +36,33 @@ books_matrix = df1.pivot_table(index = 'user_id', columns = 'original_title', va
 X = books_matrix.values.T # (9274, 3821). Transposed the books_matrix.
 
 #Fitting the Model
-SVD = TruncatedSVD(n_components=12, random_state=0)
+
+n_comp = 12 # Variable to decide the n_components used in our truncated SVD.
+SVD = TruncatedSVD(n_components=n_comp, random_state=0)
 matrix = SVD.fit_transform(X)
-print(matrix.shape) #(9274, 12)
 
+var_explained = SVD.explained_variance_ratio_.sum() # Stores the percentage of the variance between eigenvalues
 
-import warnings
-warnings.filterwarnings("ignore",category =RuntimeWarning)#to avoid RuntimeWarning #Base class for warnings about dubious runtime behavior.
-corr = np.corrcoef(matrix)
-corr.shape
+print(matrix.shape) #(9274, 12) for n_components = 12
+print(var_explained * 100) #6.839 for n_components = 12
 
 
 
-title = books_matrix.columns
-title_list = list(title)
-samia = title_list.index('Memoirs of a Geisha')
-corr_samia  = corr[samia]
-print(list(title[(corr_samia >= 0.9)]))
+# RESEARCH: UP TO HERE SO FAR
+
+
+# import warnings
+# warnings.filterwarnings("ignore",category =RuntimeWarning)#to avoid RuntimeWarning #Base class for warnings about dubious runtime behavior.
+# corr = np.corrcoef(matrix)
+# corr.shape
+#
+#
+#
+# title = books_matrix.columns
+# title_list = list(title)
+# samia = title_list.index('Memoirs of a Geisha')
+# corr_samia  = corr[samia]
+# print(list(title[(corr_samia >= 0.9)]))
 
 
 
