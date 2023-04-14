@@ -5,9 +5,6 @@ from sklearn.decomposition import TruncatedSVD
 import warnings
 
 
-
-
-
 def matrix_factorisation_1(book_title, n_recommendations):
     books = pd.read_csv('Goodbooks-10k Dataset/books.csv', sep=',')
     books = books.iloc[:, :16] # Splices the first 16 columns.
